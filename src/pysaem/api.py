@@ -319,30 +319,28 @@ def _runaway(eng: Engine, trace) -> tuple:
             x = half[:, c]
             if np.isfinite(x).all() and (x > 0).all():
                 logs[name] = np.log(x)
-    off = [n for n, v in logs.items() if abs(v[-1] - v[0]) > RUNAWAY]
-    orders = {n: abs(logs[n][-1] - logs[n][0]) / math.log(10) for n in off}
-    messages, pairs, paired = [], set(), set()
-    for a, n in enumerate(off):
-        for m in off[a + 1:]:
-            if n in paired or m in paired:
+    moved = {n: v[-1] - v[0] for n, v in logs.items() if abs(v[-1] - v[0]) > RUNAWAY}
+    orders = {n: abs(d) / math.log(10) for n, d in moved.items()}
+    messages, found = [], []
+    for a, n in enumerate(moved):
+        for m in list(moved)[a + 1:]:
+            if any({n, m} & set(f) for f in found):
                 continue
-            same = (logs[n][-1] - logs[n][0]) * (logs[m][-1] - logs[m][0]) > 0
+            same = moved[n] * moved[m] > 0
             held = logs[n] - logs[m] if same else logs[n] + logs[m]
             if np.ptp(held) < LOCKSTEP:
-                paired |= {n, m}
-                pairs.add(frozenset((f"{n}_pop", f"{m}_pop")))
+                found.append((n, m))
                 what = f"{n}/{m}" if same else f"{n}*{m}"
                 messages.append(
                     f"{n}_pop and {m}_pop run off together ({orders[n]:.0f} and {orders[m]:.0f} "
                     f"orders of magnitude over the last {len(half)} iterations) while {what} stays "
                     f"at {math.exp(held[-1]):.4g}: the data determine {what}, not {n} and {m}, "
                     f"which are not identifiable")
-    for n in off:
-        if n not in paired:
-            messages.append(
-                f"{n}_pop runs off ({orders[n]:.0f} orders of magnitude over the last {len(half)} "
-                f"iterations): the data do not limit {n} in that direction, and {n} is not "
-                f"identifiable")
+    paired = {n for f in found for n in f}
+    messages += [f"{n}_pop runs off ({orders[n]:.0f} orders of magnitude over the last {len(half)} "
+                 f"iterations): the data do not limit {n} in that direction, and {n} is not "
+                 f"identifiable" for n in moved if n not in paired]
+    pairs = {frozenset((f"{n}_pop", f"{m}_pop")) for n, m in found}
     return messages, pairs
 
 
