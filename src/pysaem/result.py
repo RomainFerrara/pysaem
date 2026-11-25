@@ -55,8 +55,9 @@ class FitResult:
     n_obs: int
     #: Number of estimated parameters.
     n_parameters: int
-    #: The stopping rules of the iterations were met and every estimate is finite. This
-    #: describes the trajectory of the iterations and does not prove convergence.
+    #: The stopping rules of the iterations were met, every estimate is finite and no typical
+    #: value runs off (see `messages`). This describes the trajectory of the iterations and does
+    #: not prove convergence.
     converged: bool
     #: Messages of the fit: parameters that look unidentifiable, imprecise standard errors,
     #: correlated random effects, dropped subjects.
