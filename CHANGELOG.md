@@ -6,6 +6,14 @@ All notable changes to PySAEM are listed here. The format follows
 
 ## Unreleased
 
+### Fixed
+
+- A fit no longer reports convergence when a log-normal typical value still moves by a factor
+  of 100 or more over the second half of the iterations. The messages name such a value, or a
+  pair that runs off together with the ratio or product the data fix, for instance Vmax and Km
+  of a Michaelis-Menten elimination whose concentrations stay far below Km.
+- The messages name the pairs of estimates correlated beyond 0.95.
+
 ## 0.3.0 - 2026-11-25
 
 First public version.

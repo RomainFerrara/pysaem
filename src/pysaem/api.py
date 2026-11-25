@@ -236,8 +236,11 @@ def finish(eng: Engine, st: Settings, trace, clock=None) -> FitResult:
         if eng.on_hazard.any() else d.n_obs
     ofv = -2 * ll
     messages = list(trace.messages)
+    runaway, pairs = _runaway(eng, trace)
+    messages += runaway
     if st.fim and fim_status != "ok" and n_free:
         messages.append(f"standard errors: {fim_status}")
+    messages += _correlated(corr, pairs)
     for j in eng.collapsed:
         if eng.tie[j] != j:
             continue
@@ -288,12 +291,68 @@ def finish(eng: Engine, st: Settings, trace, clock=None) -> FitResult:
         ofv=ofv, aic=ofv + 2 * n_free, bic=ofv + n_free * math.log(eng.N),
         bicc=ofv + (n_random + n_between) * math.log(eng.N) + n_fixed * math.log(n_info),
         n_subjects=eng.N, n_obs=d.n_obs, n_parameters=n_free,
-        converged=bool(trace.stabilized and all(math.isfinite(v) for v in values.values())),
+        converged=bool(trace.stabilized and not runaway
+                       and all(math.isfinite(v) for v in values.values())),
         provisional=bool(getattr(trace, "provisional", False)),
         messages=messages, shrinkage=shrinkage, tests=tests, timings=clock.laps, trace=tr,
         individual=ind, draws=draws, predictions=pred, vpc=vpc, pcvpc=pcvpc, correlation=corr,
         covariate_screen=post.covariate_screen(eng, cond), solver=dict(eng.prob.totals),
         vpc_hazards=vpc_hazards, hazard_events=events, curves=post.curves(eng, mean + eta_mode))
+
+
+# a log-normal typical value still moving by a factor 100 over the second half of the iterations
+# runs off; two that run off with their ratio or product held within 20% run off together
+RUNAWAY = math.log(100.0)
+LOCKSTEP = math.log(1.2)
+CORRELATED = 0.95
+
+
+def _runaway(eng: Engine, trace) -> tuple:
+    """Messages on the log-normal typical values that run off over the second half of the
+    iterations, alone or in pairs whose ratio or product holds, and the pairs found."""
+    cols = {n: i for i, n in enumerate(trace.names)}
+    half = np.asarray(trace.values, float)[len(trace.values) // 2:]
+    logs = {}
+    for j, name in enumerate(eng.names[:eng.p0]):
+        c = cols.get(f"{name}_pop")
+        if eng.tkind[j] == _TKIND["lognormal"] and c is not None and len(half) > 1:
+            x = half[:, c]
+            if np.isfinite(x).all() and (x > 0).all():
+                logs[name] = np.log(x)
+    moved = {n: v[-1] - v[0] for n, v in logs.items() if abs(v[-1] - v[0]) > RUNAWAY}
+    orders = {n: abs(d) / math.log(10) for n, d in moved.items()}
+    messages, found = [], []
+    for a, n in enumerate(moved):
+        for m in list(moved)[a + 1:]:
+            if any({n, m} & set(f) for f in found):
+                continue
+            same = moved[n] * moved[m] > 0
+            held = logs[n] - logs[m] if same else logs[n] + logs[m]
+            if np.ptp(held) < LOCKSTEP:
+                found.append((n, m))
+                what = f"{n}/{m}" if same else f"{n}*{m}"
+                messages.append(
+                    f"{n}_pop and {m}_pop run off together ({orders[n]:.0f} and {orders[m]:.0f} "
+                    f"orders of magnitude over the last {len(half)} iterations) while {what} stays "
+                    f"at {math.exp(held[-1]):.4g}: the data determine {what}, not {n} and {m}, "
+                    f"which are not identifiable")
+    paired = {n for f in found for n in f}
+    messages += [f"{n}_pop runs off ({orders[n]:.0f} orders of magnitude over the last {len(half)} "
+                 f"iterations): the data do not limit {n} in that direction, and {n} is not "
+                 f"identifiable" for n in moved if n not in paired]
+    pairs = {frozenset((f"{n}_pop", f"{m}_pop")) for n, m in found}
+    return messages, pairs
+
+
+def _correlated(corr, pairs) -> list:
+    """Messages on the pairs of estimates correlated beyond CORRELATED, except the pairs already
+    reported as running off together."""
+    if corr is None:
+        return []
+    names, r = list(corr.columns), corr.to_numpy()
+    return [f"the estimates of {a} and {b} are correlated ({r[i, k]:+.2f}): the data hardly "
+            f"separate them" for i, a in enumerate(names) for k, b in enumerate(names)
+            if k > i and abs(r[i, k]) > CORRELATED and frozenset((a, b)) not in pairs]
 
 
 def _singular_blocks(eng: Engine) -> list:
