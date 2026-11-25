@@ -1,0 +1,9 @@
+__pycache__/
+*.egg-info/
+.numba_cache/
+.pytest_cache/
+docs/_build/
+docs/jupyter_execute/
+docs/generated/
+build/
+dist/

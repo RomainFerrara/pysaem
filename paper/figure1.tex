@@ -1,0 +1,83 @@
+% Figure 1 of the paper: the model code (a), the equations PySAEM reads from it (b), typeset by
+% hand from model.equations(), and what the package derives (c). Build: xelatex figure1.tex, then
+% pdftoppm -r 300 -png -singlefile figure1.pdf figure1
+\documentclass[border=4pt]{standalone}
+\usepackage{fontspec}
+\setmainfont{texgyretermes}[Extension=.otf,UprightFont=*-regular,BoldFont=*-bold,ItalicFont=*-italic,BoldItalicFont=*-bolditalic]
+\usepackage{amsmath,listings,xcolor}
+\lstset{basicstyle=\ttfamily\fontsize{7.2}{8.6}\selectfont,columns=fullflexible,keepspaces=true,frame=none,
+  showstringspaces=false,keywordstyle=\bfseries}
+\begin{document}
+\begin{minipage}[t]{9.6cm}
+\vspace{0pt}
+{\small\textbf{a}\quad Model code}\par\smallskip
+\begin{lstlisting}[language=Python]
+import numpy as np
+from pysaem import Model
+
+N_TRANSIT = 3
+
+def transfer(rate, amount):
+    return rate * amount
+
+def rhs(t, y, p):
+    *transit, central, response = y
+    ktr = (N_TRANSIT + 1) / p.MTT
+    dy = [-transfer(ktr, transit[0])]
+    for k in range(1, N_TRANSIT):
+        dy.append(transfer(ktr, transit[k - 1])
+                  - transfer(ktr, transit[k]))
+    conc = central / p.V
+    if conc > p.Csat:
+        cl = p.CL * p.Csat / conc
+    else:
+        cl = p.CL
+    dy.append(transfer(ktr, transit[-1]) - cl * conc)
+    dy.append(p.kin * (1 - p.Imax * conc / (p.IC50 + conc))
+              - p.kout * response)
+    return dy
+
+def init(p):
+    return [0.0] * N_TRANSIT + [0.0, p.kin / p.kout]
+
+def observe(t, y, p):
+    return {"Cc": y[N_TRANSIT] / p.V,
+            "logE": np.log(y[N_TRANSIT + 1])}
+
+model = Model.from_python(
+    rhs=rhs, init=init, observe=observe,
+    states=["T1", "T2", "T3", "Ac", "R"],
+    parameters=["MTT", "V", "CL", "Csat",
+                "kin", "kout", "Imax", "IC50"],
+    inputs={"dose": "T1"},
+    values={"MTT": 2.0, "V": 10.0, "CL": 1.0, "Csat": 5.0,
+            "kin": 10.0, "kout": 0.5, "Imax": 0.8, "IC50": 2.0})
+print(model.equations())
+\end{lstlisting}
+\end{minipage}\hspace{0.5cm}%
+\begin{minipage}[t]{7cm}
+\vspace{0pt}
+{\small\textbf{b}\quad Equations read by PySAEM}\par
+\small
+\begin{align*}
+\frac{dT_1}{dt} &= -\frac{4T_1}{MTT}\\
+\frac{dT_2}{dt} &= \frac{4T_1}{MTT} - \frac{4T_2}{MTT}\\
+\frac{dT_3}{dt} &= \frac{4T_2}{MTT} - \frac{4T_3}{MTT}\\
+\frac{dA_c}{dt} &= \begin{cases} \dfrac{4T_3}{MTT} - CL\,C_{sat} & \text{if } A_c/V > C_{sat}\\[6pt]
+\dfrac{4T_3}{MTT} - \dfrac{CL\,A_c}{V} & \text{otherwise}\end{cases}\\
+\frac{dR}{dt} &= k_{in}\Big(1 - \frac{I_{max}A_c}{V(A_c/V + IC_{50})}\Big) - k_{out}R\\
+R(0) &= k_{in}/k_{out}\\
+C_c &= A_c/V, \qquad \mathrm{logE} = \log R
+\end{align*}
+\normalsize
+{\small\textbf{c}\quad What the package found}\par\smallskip
+\begin{minipage}{6.4cm}\small
+\begin{itemize}\setlength{\itemsep}{1pt}\setlength{\leftmargin}{1em}
+\item the equations give the same values as the code at points drawn around the typical values and on both sides of the condition;
+\item the system is not linear: explicit solver, implicit when stiff;
+\item the solver stops where $C_{sat} - A_c/V$ changes sign;
+\item exact Jacobian from the equations.
+\end{itemize}
+\end{minipage}
+\end{minipage}
+\end{document}

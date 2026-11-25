@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use PySAEM, please cite it as below."
+type: software
+title: "PySAEM: nonlinear mixed-effects models of ordinary differential equations in Python"
+version: 0.3.0
+date-released: "2026-11-25"
+license: MIT
+repository-code: "https://github.com/RomainFerrara/pysaem"
+url: "https://pysaem.readthedocs.io"
+authors:
+  - family-names: Ferrara
+    given-names: Romain
+    affiliation: "COMPO, Inria Center at University Côte d'Azur, Cancer Research Center of Marseille; Department of Nuclear Medicine, Institut Paoli-Calmettes, Marseille"
+  - family-names: Benzekry
+    given-names: Sébastien
+    affiliation: "COMPO, Inria Center at University Côte d'Azur, Cancer Research Center of Marseille"
+keywords:
+  - nonlinear mixed-effects models
+  - SAEM
+  - ordinary differential equations
+  - population models
+  - Python
+abstract: >
+  PySAEM estimates nonlinear mixed-effects models of ordinary differential equations in Python
+  with the stochastic approximation expectation-maximisation algorithm (SAEM). The model is
+  written as Python functions or as equations, read into symbolic equations and compiled with
+  Numba. A fit returns the estimates with their standard errors, the likelihood, information
+  criteria and diagnostics.

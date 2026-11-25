@@ -1,0 +1,73 @@
+design,subjects,samples,tool,datasets,failed,near_best,tv_bias,sd_bias,lowest_coverage,seconds
+"one compartment, rich",50,7,saemix,200,0,191,0.4,6.8,96,3.0
+"one compartment, rich",50,7,nlmixr2,200,0,199,0.4,3.1,96,20.8
+"one compartment, rich",50,7,FeRx,200,0,200,0.7,3.2,96,0.05
+"one compartment, rich",50,7,NoLimits.jl,200,0,188,0.2,3.1,94,1.1
+"one compartment, rich",50,7,pynlme,200,0,0,>1000,321.0,100,0.4
+"one compartment, rich",50,7,PySAEM,200,0,200,0.4,2.6,96,1.6
+"one compartment, sparse",100,3 of 7,saemix,200,0,135,0.3,37.6,96,3.5
+"one compartment, sparse",100,3 of 7,nlmixr2,200,0,196,0.1,11.0,94,23.6
+"one compartment, sparse",100,3 of 7,FeRx,200,0,196,0.6,5.0,94,0.06
+"one compartment, sparse",100,3 of 7,NoLimits.jl,200,0,172,0.2,7.4,96,1.8
+"one compartment, sparse",100,3 of 7,pynlme,200,0,0,>1000,>1000,100,0.3
+"one compartment, sparse",100,3 of 7,PySAEM,200,0,200,0.2,2.0,96,1.7
+"high variability, 20 subjects",20,8,saemix,200,0,199,2.7,6.5,95,2.8
+"high variability, 20 subjects",20,8,nlmixr2,200,0,199,2.7,6.5,96,10.8
+"high variability, 20 subjects",20,8,FeRx,200,0,196,2.7,7.1,96,0.04
+"high variability, 20 subjects",20,8,NoLimits.jl,200,0,194,2.8,6.7,96,0.8
+"high variability, 20 subjects",20,8,pynlme,200,0,0,>1000,621.1,100,0.3
+"high variability, 20 subjects",20,8,PySAEM,200,0,198,2.6,6.6,95,1.7
+"high variability, 100 subjects",,,saemix,200,0,,1.0,1.3,96,5.0
+"high variability, 100 subjects",,,nlmixr2,200,0,,1.1,1.3,96,41.5
+"high variability, 100 subjects",,,FeRx,200,0,,2.0,2.5,97,0.07
+"high variability, 100 subjects",,,NoLimits.jl,200,0,,0.2,1.4,96,1.9
+"high variability, 100 subjects",,,pynlme,200,0,,>1000,591.1,100,0.4
+"high variability, 100 subjects",,,PySAEM,200,0,,1.2,1.8,96,2.2
+"high variability, 20 subjects, sparse",20,3 of 8,saemix,200,0,186,>1000,14.0,92,2.1
+"high variability, 20 subjects, sparse",20,3 of 8,nlmixr2,200,0,188,14.2,10.4,91,6.4
+"high variability, 20 subjects, sparse",20,3 of 8,FeRx,200,0,167,12.4,16.3,96,0.04
+"high variability, 20 subjects, sparse",20,3 of 8,NoLimits.jl,200,0,186,9.8,10.4,92,0.8
+"high variability, 20 subjects, sparse",20,3 of 8,pynlme,200,0,0,>1000,>1000,100,0.3
+"high variability, 20 subjects, sparse",20,3 of 8,PySAEM,200,0,197,13.6,10.6,94,1.5
+"high variability, 100 subjects, sparse",,,saemix,200,0,,10.6,3.8,91,3.4
+"high variability, 100 subjects, sparse",,,nlmixr2,200,0,,11.1,4.6,92,22.4
+"high variability, 100 subjects, sparse",,,FeRx,200,0,,9.7,10.1,92,0.06
+"high variability, 100 subjects, sparse",,,NoLimits.jl,200,0,,10.5,4.6,93,2.0
+"high variability, 100 subjects, sparse",,,pynlme,200,0,,>1000,>1000,100,0.4
+"high variability, 100 subjects, sparse",,,PySAEM,200,0,,11.2,5.8,93,2.1
+"two compartments, lag, three doses",60,11,saemix,200,0,26,32.7,56.7,23,14.4
+"two compartments, lag, three doses",60,11,nlmixr2,200,0,106,31.9,20.3,32,151.1
+"two compartments, lag, three doses",60,11,FeRx,200,0,50,32.4,6.3,86,0.2
+"two compartments, lag, three doses",60,11,NoLimits.jl,200,0,67,19.2,30.7,50,35.2
+"two compartments, lag, three doses",60,11,pynlme,200,0,114,14.7,20.5,70,1.9
+"two compartments, lag, three doses",60,11,PySAEM,200,0,190,11.4,6.0,72,6.3
+three compartments,60,16,saemix,200,0,54,10.8,44.9,70,40.1
+three compartments,60,16,nlmixr2,200,0,150,1.6,11.3,93,113.3
+three compartments,60,16,FeRx,200,0,149,1.8,4.7,94,9.0
+three compartments,60,16,NoLimits.jl,200,0,83,6.4,12.5,81,54.7
+three compartments,60,16,pynlme,200,0,175,1.8,3.9,92,2.2
+three compartments,60,16,PySAEM,200,0,199,2.9,5.3,91,9.6
+intravenous and oral doses,50,20,saemix,200,0,200,0.6,3.0,96,8.1
+intravenous and oral doses,50,20,nlmixr2,200,0,200,0.6,3.0,96,58.0
+intravenous and oral doses,50,20,FeRx,200,0,200,0.6,3.2,96,2.0
+intravenous and oral doses,50,20,NoLimits.jl,200,0,139,0.8,58.1,96,3.1
+intravenous and oral doses,50,20,pynlme,200,0,200,0.7,2.9,96,1.4
+intravenous and oral doses,50,20,PySAEM,200,0,200,0.6,2.9,96,3.3
+zero-order input after a lag,100,3 of 10,saemix,200,0,53,1.1,77.7,85,12.5
+zero-order input after a lag,100,3 of 10,nlmixr2,200,0,25,10.0,36.9,82,101.5
+zero-order input after a lag,100,3 of 10,FeRx,200,0,108,4.5,9.6,70,1.8
+zero-order input after a lag,100,3 of 10,NoLimits.jl,,,,--,,,
+zero-order input after a lag,100,3 of 10,pynlme,200,0,35,61.8,50.6,61,0.7
+zero-order input after a lag,100,3 of 10,PySAEM,200,0,200,2.3,11.9,96,4.4
+linear and saturable elimination,50,10,saemix,200,0,92,35.7,43.6,74,
+linear and saturable elimination,50,10,nlmixr2,200,0,149,29.9,9.7,98,
+linear and saturable elimination,50,10,FeRx,200,0,121,3.4,13.4,100,
+linear and saturable elimination,50,10,NoLimits.jl,200,0,138,114.8,23.0,53,
+linear and saturable elimination,50,10,pynlme,200,0,141,34.5,15.8,98,
+linear and saturable elimination,50,10,PySAEM,200,0,193,69.5,1.7,74,
+tumour growth inhibition,40,13,saemix,200,0,180,9.1,6.0,85,6.7
+tumour growth inhibition,40,13,nlmixr2,200,0,153,14.7,14.0,88,15.6
+tumour growth inhibition,40,13,FeRx,200,0,64,39.7,72.5,100,2.7
+tumour growth inhibition,40,13,NoLimits.jl,200,0,175,7.6,9.4,96,2.1
+tumour growth inhibition,40,13,pynlme,200,0,5,61.1,156.3,2,0.4
+tumour growth inhibition,40,13,PySAEM,200,0,200,2.2,2.7,96,3.8

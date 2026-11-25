@@ -1,0 +1,27 @@
+# One-compartment oral model on the theophylline data (Boeckmann, Sheiner and Beal).
+# Run: pysaem fit examples/theophylline.toml
+
+[data]
+file = "theophylline.csv"
+covariates = ["WEIGHT"]
+
+[model]
+equations = """
+d/dt(Ad) = -ka*Ad              # absorption depot
+d/dt(Ac) = ka*Ad - CL/V*Ac     # central compartment
+Cc = Ac/V
+"""
+dose = "Ad"
+output = "Cc"
+covariates = ["WEIGHT"]
+
+[population]
+ka = { init = 1.0, omega = 0.5 }
+V = { init = 0.5, omega = 0.5 }
+# WEIGHT enters uncentred, so CL_pop is the clearance at 0 kg; centre the column in the data
+# to read CL_pop at a reference weight
+CL = { init = 0.04, omega = 0.5, covariates = ["WEIGHT"] }
+error = "combined1"
+
+[settings]
+seed = 1

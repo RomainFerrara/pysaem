@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "PySAEM"
+dynamic = ["version"]
+description = "Nonlinear mixed-effects models of ordinary differential equations, estimated by SAEM"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md"]
+authors = [
+    { name = "Romain Ferrara", email = "ferrarar@ipc.unicancer.fr" },
+    { name = "Sébastien Benzekry" },
+]
+requires-python = ">=3.10"
+keywords = [
+    "nonlinear mixed-effects models",
+    "SAEM",
+    "ordinary differential equations",
+    "population models",
+    "pharmacometrics",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+]
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "pandas>=2.0",
+    "sympy>=1.12",
+    "numba>=0.60",
+    "tomli>=2.0; python_version < '3.11'",
+]
+
+[project.optional-dependencies]
+plot = ["matplotlib>=3.5"]
+test = ["pytest>=8"]
+docs = ["matplotlib>=3.5", "sphinx>=7", "myst-nb>=1", "pydata-sphinx-theme>=0.15", "sphinx-copybutton"]
+
+[project.urls]
+Homepage = "https://github.com/RomainFerrara/pysaem"
+Documentation = "https://pysaem.readthedocs.io"
+Issues = "https://github.com/RomainFerrara/pysaem/issues"
+Changelog = "https://github.com/RomainFerrara/pysaem/blob/main/CHANGELOG.md"
+
+[project.scripts]
+pysaem = "pysaem.cli:main"
+
+[tool.setuptools.dynamic]
+version = {attr = "pysaem._version.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+pysaem = ["datasets/*.csv"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+markers = ["slow: end-to-end fits, deselect with -m 'not slow'"]
